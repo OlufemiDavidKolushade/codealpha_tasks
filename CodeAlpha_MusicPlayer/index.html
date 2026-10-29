@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symphony - Modern Web Music Player</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.08)',
+                        glassBorder: 'rgba(255, 255, 255, 0.15)',
+                    },
+                    animation: {
+                        'spin-slow': 'spin 20s linear infinite',
+                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: 0.6, transform: 'scale(1)' },
+                            '50%': { opacity: 0.9, transform: 'scale(1.05)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="flex items-center justify-center p-4 md:p-8 min-h-screen relative overflow-x-hidden">
+
+    <!-- Ambient Glowing Background Circles -->
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/30 rounded-full filter blur-[120px] pointer-events-none animate-pulse-glow"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/30 rounded-full filter blur-[120px] pointer-events-none animate-pulse-glow" style="animation-delay: 1s;"></div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="w-full max-w-4xl glass-panel rounded-3xl overflow-hidden shadow-2xl relative z-10 flex flex-col md:flex-row transition-all duration-300">
+        
+        <!-- MAIN PLAYER SECTION -->
+        <div class="flex-1 p-6 md:p-8 flex flex-col justify-between space-y-6">
+            
+            <!-- Top Header & Status -->
+            <div class="flex items-center justify-between text-xs tracking-wider uppercase font-semibold text-purple-300/80">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-compact-disc text-purple-400 text-sm"></i>
+                    <span>MY Own playlist</span>
+                </div>
+                <!-- Equalizer visual indicator -->
+                <div id="equalizer" class="flex items-end gap-1 h-6 px-2 py-1 rounded bg-white/5 paused">
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                </div>
+            </div>
+
+            <!-- Album Art & Vinyl Disc Section -->
+            <div class="relative flex justify-center items-center py-4">
+                <div class="relative w-48 h-48 sm:w-64 sm:h-64 group">
+                    <!-- Glow Behind Art -->
+                    <div id="artGlow" class="absolute inset-0 bg-purple-500/30 rounded-2xl blur-2xl transition-all duration-500 opacity-0"></div>
+                    
+                    <!-- Vinyl Record Decoration (Slides out when playing) -->
+                    <div id="vinyl" class="absolute top-0 right-0 w-full h-full rounded-full bg-neutral-900 border-4 border-neutral-800 shadow-xl flex items-center justify-center transition-all duration-700 transform translate-x-0 group-hover:translate-x-6 pointer-events-none">
+                        <div class="w-20 h-20 rounded-full border-4 border-neutral-700 bg-neutral-950 flex items-center justify-center">
+                            <div class="w-6 h-6 rounded-full bg-purple-500"></div>
+                        </div>
+                    </div>
+
+                    <!-- Album Cover Canvas/Image -->
+                    <div class="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 z-10 bg-slate-800">
+                        <img id="coverArt" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=500&auto=format&fit=crop&q=80" alt="Album Cover" class="w-full h-full object-cover transition-transform duration-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Song Info Display -->
+            <div class="text-center space-y-1">
+                <h2 id="songTitle" class="text-2xl font-bold text-white tracking-wide truncate"></h2>
+                <p id="artistName" class="text-sm font-medium text-purple-300/80 truncate"></p>
+            </div>
+
+            <!-- Progress Bar Section -->
+            <div class="space-y-2">
+                <div class="relative w-full">
+                    <input type="range" id="progressBar" min="0" max="100" value="0" class="w-full relative z-10">
+                </div>
+                <div class="flex justify-between text-xs font-medium text-slate-400">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalDuration">0:00</span>
+                </div>
+            </div>
+
+            <!-- Main Control Buttons -->
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center justify-between px-4 sm:px-8">
+                    <!-- Shuffle Button -->
+                    <button id="shuffleBtn" title="Shuffle" class="text-slate-400 hover:text-purple-400 transition-colors p-2 text-base">
+                        <i class="fa-solid fa-shuffle"></i>
+                    </button>
+
+                    <!-- Previous Button -->
+                    <button id="prevBtn" title="Previous Track" class="text-slate-200 hover:text-white transition-transform active:scale-95 p-2 text-xl">
+                        <i class="fa-solid fa-backward-step"></i>
+                    </button>
+
+                    <!-- Play/Pause Button -->
+                    <button id="playBtn" title="Play/Pause" class="w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-purple-500/30 hover:scale-105 active:scale-95 transition-all duration-200 text-xl">
+                        <i class="fa-solid fa-play ml-1"></i>
+                    </button>
+
+                    <!-- Next Button -->
+                    <button id="nextBtn" title="Next Track" class="text-slate-200 hover:text-white transition-transform active:scale-95 p-2 text-xl">
+                        <i class="fa-solid fa-forward-step"></i>
+                    </button>
+
+                    <!-- Repeat Button Mode -->
+                    <button id="repeatBtn" title="Repeat Mode" class="text-slate-400 hover:text-purple-400 transition-colors p-2 text-base relative">
+                        <i class="fa-solid fa-repeat"></i>
+                    </button>
+                </div>
+
+                <!-- Secondary Controls: Volume & Toggles -->
+                <div class="flex items-center justify-between bg-white/5 px-4 py-2.5 rounded-xl backdrop-blur-md">
+                    <!-- Volume Control -->
+                    <div class="flex items-center gap-2 flex-1 max-w-[200px]">
+                        <button id="muteBtn" class="text-slate-400 hover:text-white text-sm">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" class="w-full">
+                    </div>
+
+                    <!-- Additional Toggles -->
+                    <div class="flex items-center gap-4">
+                        <!-- Autoplay Toggle -->
+                        <button id="autoplayBtn" title="Autoplay Toggle" class="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 transition-all">
+                            <i class="fa-solid fa-robot"></i>
+                            <span>Autoplay</span>
+                        </button>
+
+                        <!-- Mobile Playlist Drawer Toggle Button -->
+                        <button id="playlistToggleBtn" class="md:hidden text-slate-300 hover:text-white p-1 text-base">
+                            <i class="fa-solid fa-list-ul"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLAYLIST SIDE PANEL -->
+        <div id="playlistContainer" class="w-full md:w-80 bg-slate-900/60 border-t md:border-t-0 md:border-l border-white/10 p-6 flex flex-col justify-between hidden md:flex">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+                    <h3 class="font-bold text-white flex items-center gap-2 text-base">
+                        <i class="fa-solid fa-list text-purple-400"></i> Playlist
+                    </h3>
+                    <span id="playlistCount" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">
+                        0 tracks
+                    </span>
+                </div>
+
+                <!-- Playlist Items List -->
+                <div id="playlistItems" class="space-y-2 max-h-[360px] overflow-y-auto custom-scrollbar pr-1">
+                    <!-- Dynamic Playlist Items Generated via JS -->
+                </div>
+            </div>
+
+            <!-- Footer Stats inside Playlist Panel -->
+            <div class="pt-4 border-t border-white/10 text-xs text-slate-400 flex justify-between items-center">
+                <span>Audio Engine Active</span>
+                <span class="inline-flex items-center gap-1 text-emerald-400">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Live
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audioPlayer" preload="metadata"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>

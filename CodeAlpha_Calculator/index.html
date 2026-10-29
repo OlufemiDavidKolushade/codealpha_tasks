@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Calculator</h1>
+
+<main class="calc" aria-label="Calculator">
+  <div class="display" role="status" aria-live="polite">
+    <div class="expr" id="expr"></div>
+    <div class="preview" id="preview"></div>
+    <div class="main" id="main">0</div>
+  </div>
+
+  <div class="keys">
+    <button class="clr" data-k="clear" aria-label="Clear all">C</button>
+    <button class="fn" data-k="back" aria-label="Delete last">⌫</button>
+    <button class="fn" data-k="percent" aria-label="Percent">%</button>
+    <button class="op" data-k="/" aria-label="Divide">÷</button>
+
+    <button data-k="7">7</button>
+    <button data-k="8">8</button>
+    <button data-k="9">9</button>
+    <button class="op" data-k="*" aria-label="Multiply">×</button>
+
+    <button data-k="4">4</button>
+    <button data-k="5">5</button>
+    <button data-k="6">6</button>
+    <button class="op" data-k="-" aria-label="Subtract">−</button>
+
+    <button data-k="1">1</button>
+    <button data-k="2">2</button>
+    <button data-k="3">3</button>
+    <button class="op" data-k="+" aria-label="Add">+</button>
+
+    <button class="fn" data-k="neg" aria-label="Change sign">±</button>
+    <button data-k="0">0</button>
+    <button data-k=".">.</button>
+    <button class="eq" data-k="=" aria-label="Equals">=</button>
+  </div>
+</main>
+
+<section class="history" aria-label="Calculation history">
+  <div class="history-head">
+    <h2>History</h2>
+    <button class="clear-history" id="clearHistory" type="button">Clear history</button>
+  </div>
+  <ul id="historyList" class="history-list"></ul>
+  <p class="empty" id="historyEmpty">Your calculations will appear here.</p>
+</section>
+
+<p class="note">Keyboard works too: digits, + − * /, Enter for equals, Backspace to delete, Esc to clear.</p>
+
+<script src="script.js"></script>
+</body>
+</html>

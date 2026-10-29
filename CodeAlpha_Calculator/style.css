@@ -1,0 +1,153 @@
+:root {
+  --page: #11182e;
+  --text: #e9defd;
+  --muted: #8f94b8;
+  --panel: #171f3b;
+  --line: #2a3459;
+  --body: #1a2243;
+  --lcd: #0c1226;
+  --lcd-ink: #e9d5ff;
+  --lcd-dim: #8b7bb8;
+  --accent: #c084fc;
+  --key: #252f57;
+  --key-ink: #e9defd;
+  --op: #c084fc;
+  --op-ink: #1e1033;
+  --clear: #f0589a;
+  --fn: #3b4678;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  background-color: var(--page);
+  background-image: radial-gradient(rgba(192, 132, 252, 0.10) 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: var(--text);
+  font-family: "Sora", system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 28px 20px;
+}
+
+h1 { font-size: 1rem; font-weight: 600; margin: 0; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
+.note {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-align: center;
+  max-width: 300px;
+}
+
+/* ---------- Calculator ---------- */
+.calc {
+  width: 100%;
+  max-width: 340px;
+  background: var(--body);
+  border-radius: 22px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(192, 132, 252, 0.05);
+}
+
+.display {
+  background: var(--lcd);
+  color: var(--lcd-ink);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-family: "DM Mono", ui-monospace, monospace;
+  text-align: right;
+  min-height: 118px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.expr { font-size: 0.9rem; color: var(--lcd-dim); min-height: 1.3em; overflow-x: auto; white-space: nowrap; }
+.preview { font-size: 0.95rem; color: var(--lcd-dim); min-height: 1.4em; }
+.main { font-size: 2.5rem; font-weight: 500; line-height: 1.15; white-space: nowrap; overflow: hidden; }
+.main.small { font-size: 1.5rem; }
+
+.keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+.keys button {
+  font: inherit;
+  font-size: 1.25rem;
+  font-weight: 500;
+  height: 60px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--key);
+  color: var(--key-ink);
+  cursor: pointer;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45);
+  transition: transform 0.06s, box-shadow 0.06s, filter 0.15s;
+}
+
+.keys button:hover { filter: brightness(1.06); }
+.keys button:active,
+.keys button.pressed { transform: translateY(3px); box-shadow: 0 0 0 rgba(0, 0, 0, 0.45); }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.op  { background: var(--op) !important;    color: var(--op-ink) !important; }
+.fn  { background: var(--fn) !important;    color: #e9defd !important; }
+.clr { background: var(--clear) !important; color: #fff !important; }
+.eq  { background: linear-gradient(135deg, #c084fc, #8b5cf6) !important; color: #fff !important; }
+
+/* ---------- History ---------- */
+.history {
+  width: 100%;
+  max-width: 340px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+
+.history-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.history-head h2 { font-size: 0.95rem; font-weight: 600; margin: 0; }
+
+.clear-history {
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--clear);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+.clear-history:hover { text-decoration: underline; }
+
+.history-list { list-style: none; margin: 0; padding: 0; max-height: 240px; overflow-y: auto; }
+
+.history-list li button {
+  width: 100%;
+  text-align: right;
+  font-family: "DM Mono", ui-monospace, monospace;
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 4px;
+  cursor: pointer;
+}
+.history-list li:first-child button { border-top: 0; }
+.history-list li button:hover { background: rgba(192, 132, 252, 0.12); }
+.history-list .h-expr { display: block; font-size: 0.82rem; color: var(--muted); }
+.history-list .h-result { display: block; font-size: 1.1rem; font-weight: 500; }
+
+.empty { margin: 6px 0 2px; font-size: 0.85rem; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .keys button { transition: none; }
+}
